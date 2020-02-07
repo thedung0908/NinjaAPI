@@ -70,6 +70,9 @@ namespace NinjaAPI.Tests.Services
             {
                 //Arrange
                 string clanName = "My Clan";
+                ClanRepositoryMock
+                    .Setup(x => x.ReadOneAsync(clanName))
+                    .ReturnsAsync(default(Clan));
 
                 //Act
                 var result = await ServiceUnderTest.ReadOneAsync(clanName);
@@ -86,6 +89,10 @@ namespace NinjaAPI.Tests.Services
             {
                 //Arrange
                 string clanName = "My Clan";
+                var expectedClan = new Clan { Name = clanName }; 
+                ClanRepositoryMock
+                    .Setup(x => x.ReadOneAsync(clanName))
+                    .ReturnsAsync(expectedClan);
 
                 //Act
                 var result = await ServiceUnderTest.IsClanExistsAsync(clanName);
@@ -99,6 +106,9 @@ namespace NinjaAPI.Tests.Services
             {
                 //Arrange
                 string clanName = "My Clan";
+                ClanRepositoryMock
+                    .Setup(x => x.ReadOneAsync(clanName))
+                    .ReturnsAsync(default(Clan));
 
                 //Act
                 var result = await ServiceUnderTest.IsClanExistsAsync(clanName);

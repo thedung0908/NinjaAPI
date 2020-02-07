@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NinjaAPI.Repositories;
 using NinjaAPI.Services;
 
 namespace NinjaAPI
@@ -25,6 +26,7 @@ namespace NinjaAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IClanService, ClanService>();
+            services.AddSingleton<IClanRepository, ClanRepository>();
             services.AddMvc();
         }
 

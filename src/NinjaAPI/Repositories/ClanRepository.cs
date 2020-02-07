@@ -1,19 +1,20 @@
-﻿using System;
+﻿using NinjaAPI.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NinjaAPI.Models;
-using NinjaAPI.Repositories;
 
-namespace NinjaAPI.Services
+namespace NinjaAPI.Repositories
 {
-    public class ClanService : IClanService
+    public class ClanRepository : IClanRepository
     {
-        private IClanRepository _clanRepository;
-        public ClanService(IClanRepository clanRepository)
+        private readonly List<Clan> _clans;
+        public ClanRepository(IEnumerable<Clan> clans)
         {
-            _clanRepository = clanRepository ?? throw new ArgumentNullException(nameof(clanRepository));
+            if (clans == null) { throw new ArgumentNullException(nameof(clans)); }
+            _clans = new List<Clan>(clans);
         }
+
         public Task<Clan> CreateAsync(Clan clan)
         {
             throw new NotSupportedException();
@@ -24,19 +25,15 @@ namespace NinjaAPI.Services
             throw new NotSupportedException();
         }
 
-        public async Task<bool> IsClanExistsAsync(string clanName)
-        {
-            return await _clanRepository.ReadOneAsync(clanName) != null;
-        }
-
         public Task<IEnumerable<Clan>> ReadAllAsync()
         {
-            return _clanRepository.ReadAllAsync();
+            return Task.FromResult(_clans.AsEnumerable());
         }
 
         public Task<Clan> ReadOneAsync(string clanName)
         {
-            return _clanRepository.ReadOneAsync(clanName);
+            var clan = _clans.FirstOrDefault(x => x.Name == clanName);
+            return Task.FromResult(clan);
         }
 
         public Task<Clan> UpdateAsync(Clan clan)
