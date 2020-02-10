@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using NinjaAPI.Models;
 using NinjaAPI.Repositories;
 using NinjaAPI.Services;
+using System.Collections.Generic;
 
 namespace NinjaAPI
 {
@@ -25,8 +22,12 @@ namespace NinjaAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IClanService, ClanService>();
-            services.AddSingleton<IClanRepository, ClanRepository>();
+            services.TryAddSingleton<IClanService, ClanService>();
+            services.TryAddSingleton<IClanRepository, ClanRepository>();
+            services.TryAddSingleton<IEnumerable<Clan>>(new Clan[] {
+                new Clan { Name = "Marvel" },
+                new Clan { Name = "DC Comics "}
+            });
             services.AddMvc();
         }
 
