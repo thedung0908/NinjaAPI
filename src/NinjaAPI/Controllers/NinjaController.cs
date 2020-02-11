@@ -21,6 +21,7 @@ namespace NinjaAPI.Controllers
 
         // GET: api/Ninja
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Ninja>), StatusCodes.Status200OK)]
         public Task<IActionResult> ReadAllAsync()
         {
             throw new NotImplementedException();
@@ -28,6 +29,8 @@ namespace NinjaAPI.Controllers
 
         // GET: api/Ninja/5
         [HttpGet("{clan}")]
+        [ProducesResponseType(typeof(IEnumerable<Ninja>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public Task<IActionResult> ReadAllClanAsync(string clanName)
         {
             throw new NotImplementedException();
@@ -35,6 +38,8 @@ namespace NinjaAPI.Controllers
 
         // GET: api/Ninja/5/2
         [HttpGet("{clan}/{key}")]
+        [ProducesResponseType(typeof(Ninja), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public Task<IActionResult> ReadOneAsync(string clanName, string key)
         {
             throw new NotImplementedException();
@@ -42,6 +47,8 @@ namespace NinjaAPI.Controllers
 
         // Create: api/Ninja
         [HttpPost]
+        [ProducesResponseType(typeof(Ninja), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public Task<IActionResult> CreateAsync([FromBody]Ninja ninja)
         {
             throw new NotImplementedException();
@@ -49,6 +56,9 @@ namespace NinjaAPI.Controllers
         
         // Update: api/Ninja
         [HttpPut]
+        [ProducesResponseType(typeof(Ninja), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public Task<IActionResult> UpdateAsync([FromBody]Ninja ninja)
         {
             throw new NotImplementedException();
@@ -56,7 +66,9 @@ namespace NinjaAPI.Controllers
 
         // DELETE: api/Ninja/5/2
         [HttpDelete("{clan}/{key}")]
-        public void DeleteAsync(string clanName, string key)
+        [ProducesResponseType(typeof(Ninja), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public Task<IActionResult> DeleteAsync(string clanName, string key)
         {
             throw new NotImplementedException();
         }

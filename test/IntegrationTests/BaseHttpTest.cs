@@ -30,7 +30,6 @@ namespace IntegrationTests
 
         protected virtual void ConfigureServices(IServiceCollection services)
         {
-
         }
         #region IDisposable support
         private bool disposedValue = false;

@@ -27,6 +27,7 @@ namespace IntegrationTests
             protected override void ConfigureServices(IServiceCollection services)
             {
                 services.AddSingleton(Clans);
+                services.AddMvc(option => option.EnableEndpointRouting = false);
             }
 
             [Fact]

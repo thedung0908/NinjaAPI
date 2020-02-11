@@ -47,11 +47,12 @@ namespace NinjaAPI.Tests.Repositories
             public async Task ShouldReturnTheExpectedClan()
             {
                 //Arrange
-                string clanName = "My Clan";
-                Clan expectedClan = new Clan { Name = clanName };
+                var expectedClan = Clans[1];
+                var expectedClanName = expectedClan.Name;
+                
 
                 //Act
-                var result = await RepositoryUnderTest.ReadOneAsync(clanName);
+                var result = await RepositoryUnderTest.ReadOneAsync(expectedClanName);
 
                 //Assert
                 Assert.Same(expectedClan, result);
