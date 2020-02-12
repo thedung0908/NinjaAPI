@@ -113,7 +113,7 @@ namespace NinjaAPI.Tests.Controllers
                 var ninjaKey = "Some ninja key";
                 NinjaServiceMock
                     .Setup(x => x.ReadOneAsync(clanName, ninjaKey))
-                    .ThrowsAsync(new NinjaNotFoundException(clanName, ninjaKey);
+                    .ThrowsAsync(new NinjaNotFoundException(clanName, ninjaKey));
 
                 //Act
                 var result = await ControllerUnderTest.ReadOneAsync(clanName, ninjaKey);
@@ -238,13 +238,15 @@ namespace NinjaAPI.Tests.Controllers
             public async void Should_return_NotFoundResult_when_NinjaNotFoundException_is_thrown()
             {
                 //Arrange 
-                var unexistingNinja = new Ninja { Name = "Test Ninja 1", Clan = new Clan { Name = "Some Clan" }, Key = "SomeNinjaKey" };
+                var clanName = "Some clan name";
+                var ninjaKey = "SomeNinjaKey";
+                var unexistingNinja = new Ninja { Name = "Test Ninja 1", Clan = new Clan { Name = clanName }, Key = ninjaKey };
                 NinjaServiceMock
-                    .Setup(x => x.UpdateAsync(unexistingNinja))
+                    .Setup(x => x.DeleteAsync(clanName, ninjaKey))
                     .ThrowsAsync(new NinjaNotFoundException(unexistingNinja));
 
                 //Act 
-                var result = await ControllerUnderTest.UpdateAsync(unexistingNinja);
+                var result = await ControllerUnderTest.DeleteAsync(clanName, ninjaKey);
 
                 //Assert
                 Assert.IsType<NotFoundResult>(result);
@@ -254,11 +256,12 @@ namespace NinjaAPI.Tests.Controllers
             public async void Should_return_BadRequestResult()
             {
                 //Arrange
-                var ninja = new Ninja { Name = "Test Ninja 1" };
+                var clanName = "Some clan name";
+                var ninjaKey = "SomeNinjaKey";
                 ControllerUnderTest.ModelState.AddModelError("Key", "Some error");
 
                 //Act 
-                var result = await ControllerUnderTest.UpdateAsync(ninja);
+                var result = await ControllerUnderTest.DeleteAsync(clanName, ninjaKey);
 
                 //Assert
                 var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);

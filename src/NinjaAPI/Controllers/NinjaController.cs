@@ -22,36 +22,59 @@ namespace NinjaAPI.Controllers
         // GET: api/Ninja
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Ninja>), StatusCodes.Status200OK)]
-        public Task<IActionResult> ReadAllAsync()
+        public async Task<IActionResult> ReadAllAsync()
         {
-            throw new NotImplementedException();
+            var allNinjas = await _ninjaService.ReadAllAsync();
+            return Ok(allNinjas);
         }
 
         // GET: api/Ninja/5
         [HttpGet("{clan}")]
         [ProducesResponseType(typeof(IEnumerable<Ninja>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public Task<IActionResult> ReadAllClanAsync(string clanName)
+        public async Task<IActionResult> ReadAllClanAsync(string clanName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var allNinjasInClan = await _ninjaService.ReadAllClanAsync(clanName);
+                return Ok(allNinjasInClan);
+            }
+            catch (ClanNotFoundException)
+            {
+                return NotFound();
+            }
         }
 
         // GET: api/Ninja/5/2
         [HttpGet("{clan}/{key}")]
         [ProducesResponseType(typeof(Ninja), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public Task<IActionResult> ReadOneAsync(string clanName, string key)
+        public async Task<IActionResult> ReadOneAsync(string clanName, string key)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var ninja = await _ninjaService.ReadOneAsync(clanName, key);
+                return Ok(ninja);
+            }
+            catch (NinjaNotFoundException)
+            {
+                return NotFound();
+            }
         }
 
         // Create: api/Ninja
         [HttpPost]
         [ProducesResponseType(typeof(Ninja), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public Task<IActionResult> CreateAsync([FromBody]Ninja ninja)
+        public async Task<IActionResult> CreateAsync([FromBody]Ninja ninja)
         {
-            throw new NotImplementedException();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var createdNinja = await _ninjaService.CreateAsync(ninja);
+            return CreatedAtAction(nameof(ReadOneAsync), new { clan = createdNinja.Clan.Name, key = createdNinja.Key }, createdNinja);
+
         }
         
         // Update: api/Ninja
@@ -59,18 +82,42 @@ namespace NinjaAPI.Controllers
         [ProducesResponseType(typeof(Ninja), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public Task<IActionResult> UpdateAsync([FromBody]Ninja ninja)
+        public async Task<IActionResult> UpdateAsync([FromBody]Ninja ninja)
         {
-            throw new NotImplementedException();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var updatedNinja = await _ninjaService.UpdateAsync(ninja);
+                return Ok(updatedNinja);
+            }
+            catch (NinjaNotFoundException)
+            {
+                return NotFound();
+            }
         }
 
         // DELETE: api/Ninja/5/2
         [HttpDelete("{clan}/{key}")]
         [ProducesResponseType(typeof(Ninja), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public Task<IActionResult> DeleteAsync(string clanName, string key)
+        public async Task<IActionResult> DeleteAsync(string clanName, string key)
         {
-            throw new NotImplementedException();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var deletedNinja = await _ninjaService.DeleteAsync(clanName, key);
+                return Ok(deletedNinja);
+            }
+            catch (NinjaNotFoundException)
+            {
+                return NotFound();
+            }
         }
     }
 }
