@@ -10,18 +10,25 @@ namespace NinjaAPI.Services
     public class NinjaService : INinjaService
     {
         private INinjaRepository _ninjaRepository;
-        public NinjaService(INinjaRepository ninjaRepository)
+        private IClanService _clanService;
+        public NinjaService(INinjaRepository ninjaRepository, IClanService clanService)
         {
             _ninjaRepository = ninjaRepository ?? throw new ArgumentNullException(nameof(ninjaRepository));
+            _clanService = clanService ?? throw new ArgumentNullException(nameof(clanService));
         }
-        public Task<Ninja> CreateAsync(Ninja ninja)
+        public async Task<Ninja> CreateAsync(Ninja ninja)
         {
-            throw new NotImplementedException();
+            if (!await _clanService.IsClanExistsAsync(ninja.Clan.Name))
+            {
+                throw new ClanNotFoundException(ninja.Clan.Name);
+            }
+            return await _ninjaRepository.CreateAsync(ninja);
         }
 
-        public Task<Ninja> DeleteAsync(string clanName, string ninjaKey)
+        public async Task<Ninja> DeleteAsync(string clanName, string ninjaKey)
         {
-            throw new NotImplementedException();
+            await EnforceNinjaExistenceAsync(clanName, ninjaKey);
+            return await _ninjaRepository.DeleteAsync(clanName, ninjaKey);
         }
 
         public Task<IEnumerable<Ninja>> ReadAllAsync()
@@ -30,27 +37,41 @@ namespace NinjaAPI.Services
             return allNinjas;
         }
 
-        public Task<IEnumerable<Ninja>> ReadAllClanAsync(string clanName)
+        public async Task<IEnumerable<Ninja>> ReadAllClanAsync(string clanName)
         {
-            try
+            bool isClanExist = await _clanService.IsClanExistsAsync(clanName);
+            if (!isClanExist)
             {
-                var allNinjasInClan = _ninjaRepository.ReadAllClanAsync(clanName);
-                return allNinjasInClan;
+                throw new ClanNotFoundException(clanName);
             }
-            catch (ClanNotFoundException)
-            {
-                return null;
-            }
+            return await _ninjaRepository.ReadAllClanAsync(clanName);
         }
 
-        public Task<Ninja> ReadOneAsync(string clanName, string ninjaKey)
+        public async Task<Ninja> ReadOneAsync(string clanName, string ninjaKey)
         {
-            throw new NotImplementedException();
+            bool isClanExist = await _clanService.IsClanExistsAsync(clanName);
+            if (!isClanExist)
+            {
+                throw new ClanNotFoundException(clanName);
+            }
+            var ninja = await EnforceNinjaExistenceAsync(clanName, ninjaKey);
+            return ninja;
         }
 
-        public Task<Ninja> UpdateAsync(Ninja ninja)
+        public async Task<Ninja> UpdateAsync(Ninja ninja)
         {
-            throw new NotImplementedException();
+            await EnforceNinjaExistenceAsync(ninja.Clan.Name, ninja.Key);
+            return await _ninjaRepository.UpdateAsync(ninja);
+        }
+
+        private async Task<Ninja> EnforceNinjaExistenceAsync(string clanName, string ninjaKey)
+        {
+            var remoteNinja = await _ninjaRepository.ReadOneAsync(clanName, ninjaKey);
+            if (remoteNinja == null)
+            {
+                throw new NinjaNotFoundException(clanName, ninjaKey);
+            }
+            return remoteNinja;
         }
     }
 }
